@@ -2,6 +2,7 @@
 
 call :assert 0 0
 call :assert 42 42
+call :assert 21 "5+20-4"
 
 echo OK
 
@@ -11,7 +12,7 @@ exit /b 0
 	setlocal
 
 	set expected=%1
-	set input=%2
+	set input=%~2
 
 	CCompiler %input% > tmp.asm
 	ml /c /coff tmp.asm
