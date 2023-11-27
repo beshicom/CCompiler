@@ -15,6 +15,10 @@
 
 
 
+char *	user_input;		// 処理するプログラムの文字列全体の先頭
+
+
+
 // トークンの種類 TokenKind										//TAG?JUMP_MARK
 typedef enum {
 
@@ -32,7 +36,7 @@ struct Token {
 	TokenKind	kind;	// トークンの型
 	Token *		next;	// 次の入力トークン
 	int			val;	// kindがTK_NUMの時
-	char *		str;	// トークン文字列
+	char *		str;	// トークン文字列の先頭
 
 };
 
@@ -56,6 +60,36 @@ void error ( int nErrCode, int nSubCode, char * fmt, ... )
 
 }
 //void error ( char * fmt, ... )
+
+
+
+// エラーを報告するための関数 error_at()						//TAG_JUMP_MARK
+//	printf()と同じ引数。
+void error_at( int nErrCode, int nSubCode, char * loc, char * fmt, ... )
+{
+
+	va_list		ap;
+	va_start( ap, fmt );
+
+	int	pos = loc - user_input;
+
+	// 1+2-a
+	//     ^ 文法が違います
+
+	fprintf( stderr, "%s\n", user_input );
+	fprintf( stderr, "%*s", pos, " " );	// pos個のスペース
+	fprintf( stderr, "^ " );
+
+	char	buf[ 100 ];
+	vsprintf( buf, fmt, ap );
+	strcat( buf, "\n" );
+
+	fprintf( stderr, buf );
+
+	error ( nErrCode, nSubCode, buf );
+
+}
+//void error_at( int nErrCode, int nSubCode, char *p loc, char * fmt, ... )
 
 
 
@@ -83,8 +117,9 @@ bool consume ( char op )
 void expect ( char op, int nErrCode )
 {
 
-	if(  ( token->kind != TK_RESERVED )||( token->str[0] != op )  )
-		error( nErrCode, 100, "'%c'ではありません。", op );
+	if(  ( token->kind != TK_RESERVED )||( token->str[0] != op )  ){
+		error_at( nErrCode, 100, token->str, "'%c'ではありません。", op );
+	}
 
 	token = token->next;	// 次のトークンへ
 
@@ -100,7 +135,7 @@ int expect_number ( int nErrCode )
 {
 
 	if( token->kind != TK_NUM )
-		error( nErrCode, 100, "数値ではありません。" );
+		error_at( nErrCode, 100, token->str, "数値ではありません。" );
 
 	int	val = token->val;
 	token = token->next;	// 次のトークンへ
@@ -204,7 +239,7 @@ Token * tokenize ( char * pStr, int nErrCode )
 			continue;
 		}
 
-		error( nErrCode, 100, "文法が違います。(%dバイト目)", p-pStr );
+		error_at( nErrCode, 100, p, "文法が違います。(%dバイト目)", p-pStr );
 
 	}// while *p
 
@@ -231,6 +266,7 @@ int main ( int argc, char **argv )
 	}
 
 	// 引数からトークンのリストを作る
+	user_input = argv[1];
 	Token *	mToken = token = tokenize( argv[1], 1000 );
 
 	printf( "\n\n\n" );
