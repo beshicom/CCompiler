@@ -25,6 +25,11 @@ void Indent ( int n );
 
 
 
+// n個のスペースを表示 Indent0()								//TAG_JUMP_MARK
+void Indent0 ( int n );
+
+
+
 // キーボードから１行を入力 getline()							//TAG_JUMP_MARK
 int getline ( char * pBuf, int nChar );
 

@@ -13,7 +13,8 @@ int		nLastError = 0;	// 直近のエラーコード
 
 
 
-void Indent ( int n )											//TAG_JUMP_MARK
+// n個のスペースを表示 Indent()									//TAG_JUMP_MARK
+void Indent ( int n )
 {
 	for( int i=0; i<n; ++i ){
 		char * p = ". ";
@@ -24,7 +25,20 @@ void Indent ( int n )											//TAG_JUMP_MARK
 
 
 
-int getline ( char * pBuf, int nChar )							//TAG_JUMP_MARK
+// n個のスペースを表示 Indent0()								//TAG_JUMP_MARK
+void Indent0 ( int n )
+{
+	for( int i=0; i<n; ++i ){
+		char * p = "  ";
+		if( i % 2 )	p = "  ";
+		printf( p );
+	}
+}
+
+
+
+// キーボードから１行入力する getline()							//TAG_JUMP_MARK
+int getline ( char * pBuf, int nChar )
 {
 
 	int		c, n;

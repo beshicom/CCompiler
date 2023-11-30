@@ -4,6 +4,9 @@ call :assert 0 0
 call :assert 42 42
 call :assert 21 "5+20-4"
 call :assert 41 " 12 + 34 - 5 "
+call :assert 47 "5+6*7"
+call :assert 15 "5*(9-6)"
+call :assert 4 "(3+5)/2"
 
 echo OK
 

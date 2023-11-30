@@ -15,6 +15,7 @@
 
 #include	"token.h"
 #include	"parse.h"
+#include	"gen.h"
 
 
 
@@ -56,42 +57,14 @@ int main ( int argc, char **argv )
 		printf( "\n" );
 	}
 
-	/*
 	if( ! fAsm ){
 		delete_list( mToken );
 		delete_tree( NodeTop );
 		return 0;
 	}
 
-	printf( "\n\n\n" );
-	printf( ".386\n" );
-	printf( ".model  flat, stdcall\n" );
-	printf( "option  casemap: none\n" );
-	printf( "\n\n\n" );
-	printf( ".code\n" );
-	printf( "start:\n" );
-	printf( "\n\n\n" );
-
-	// 式の最初は数値でなければならないので、それをチェックしつつ出力
-	printf(  "    mov     eax, %ld\n",  expect_number( 2100 )  );
-
-	while( ! at_eof() ){
-
-		if( consume( '+' ) ){
-			printf(  "    add     eax, %ld\n",  expect_number( 2200 )  );
-		}
-
-		expect( '-', 2300 );
-		printf(  "    sub     eax, %ld\n",  expect_number( 2400 )  );
-
-	} //while *pCmd
-
-	printf( "    ret\n" );
-	printf( "\n\n\n" );
-	printf( "end start\n" );
-	printf( "\n\n\n" );
-
-	*/
+	// x86 アセンブラコードの生成
+	GenAsm( NodeTop );
 
 	delete_list( mToken );
 	delete_tree( NodeTop );

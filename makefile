@@ -4,8 +4,8 @@
 all : CCompiler.exe
 
 
-CCompiler.exe : CCompiler.obj object.obj token.obj parse.obj
-	cl CCompiler.obj object.obj token.obj parse.obj
+CCompiler.exe : CCompiler.obj object.obj token.obj parse.obj gen.obj
+	cl CCompiler.obj object.obj token.obj parse.obj gen.obj
 
 
 CCompiler.obj : CCompiler.c object.h token.h parse.h
@@ -22,6 +22,9 @@ token.obj : token.c object.h token.h
 
 parse.obj : parse.c object.h token.h parse.h
 	cl -c parse.c
+
+gen.obj : gen.c gen.h object.h parse.h
+	cl -c gen.c
 
 
 
