@@ -67,6 +67,44 @@ int gen ( Node * node, int nDepth )
 			//edx eax を64ビット整数とみなしてediで符号付き除算をして
 			//	商をeax、余りをedxに入れる。
 		break;
+	case ND_SML:	// <
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    setl    al\n" );	// 直前のcmpが < の時にalに1をセット
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		break;
+	case ND_BIG:	// >  ->  ! <=
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    setle   al\n" );	// 直前のcmpが <= の時にalに1をセット
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		printf( "    xor     eax, 1\n" );
+		break;
+	case ND_SME:	// <=
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    setle   al\n" );	// 直前のcmpが <= の時にalに1をセット
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		break;
+	case ND_BGE:	// >=  ->  ! <
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    setl    al\n" );	// 直前のcmpが < の時にalに1をセット
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		printf( "    xor     eax, 1\n" );
+		break;
+	case ND_EQU:
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    sete    al\n" );	// 直前のcmpが等しい時にalに1をセット
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		break;
+	case ND_NEQ:
+		Indent0( nDepth );
+		printf( "    cmp     eax, edi\n" );
+		printf( "    setne    al\n" );	// 直前のcmpが等しくない時にalに1
+		printf( "    movzx   eax, al\n" );	// 上位ビットをゼロに
+		break;
 	}// switch
 
 	// 計算結果をスタックへ積む。

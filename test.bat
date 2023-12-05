@@ -13,6 +13,14 @@ call :assert 2 "(+2)"
 call :assert -2 "(-2)"
 call :assert 1 "-2++3"
 call :assert 2 "-2*-3+(-4)"
+call :assert 1 "1<2"
+call :assert 0 "2<1"
+call :assert 1 "1>=1"
+call :assert 1 "2>=1"
+call :assert 0 "1>=2"
+call :assert 1 "1+9<=2*6"
+call :assert 1 "1==1"
+call :assert 0 "1!=1"
 
 echo OK
 

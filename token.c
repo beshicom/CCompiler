@@ -77,45 +77,58 @@ int error_at( int nErrCode, int nSubCode, char * loc, char * fmt, ... )
 // consume()													//TAG_JUMP_MARK
 //	次のトークンtokenが期待している記号の時は真を返す。でなければ偽を返す。
 //	トークンを読み進める。
-bool consume ( char op )
+bool consume ( char * op )
 {
 
-	if(  ( token->kind != TK_RESERVED )||( token->str[0] != op )  ){
+	nLastError = 0;
+
+	if( op == NULL ){
+		nLastError = 3;
+		return false;
+	}
+
+	if(
+		( token->kind != TK_RESERVED )||
+		( strlen(op) != token->len )||
+		memcmp( token->str, op, token->len )
+	){
 		nLastError = 1;
 		return false;
 	}
 
 	token = token->next;	// 次のトークンへ
 
-	nLastError = 0;
-
 	return true;
 
 }
-//bool consume ( char op )
+//bool consume ( char * op )
 
 
 
 // expect()														//TAG_JUMP_MARK
 //	次のトークンtokenが期待している記号の時はトークンを１つ読み進める。
 //	でなければエラーを報告する。
-int expect ( char op, int nErrCode )
+int expect ( char * op, int nErrCode )
 {
 
-	if(  ( token->kind != TK_RESERVED )||( token->str[0] != op )  ){
-		error_at( nErrCode, 100, token->str, "'%c'ではありません。", op );
+	nLastError = 0;
+
+	if(
+		( token->kind != TK_RESERVED )||
+		( strlen( op ) != token->len )||
+		memcmp( token->str, op, token->len )
+	){
+		error_at( nErrCode, 100, token->str, "'%s'ではありません。", op );
 		nLastError = nErrCode;
 		return nErrCode;
 	}
 
 	token = token->next;	// 次のトークンへ
 
-	nLastError = 0;
-
 	return 0;
 
 }
-//int expect ( char op, int nErrCode )
+//int expect ( char * op, int nErrCode )
 
 
 
@@ -174,7 +187,8 @@ Token * new_token ( TokenKind kind, Token * cur, char * str )
 		return NULL;
 	}
 
-	tok->kind = kind;
+	tok->kind = kind;  tok->len = 1;
+	if( kind == TK_RESERVED2 ){  tok->kind = TK_RESERVED;  tok->len = 2;  }
 	tok->str = str;
 
 	// curの次に作成したトークンを繋げる。
@@ -233,7 +247,26 @@ Token * tokenize ( char * pStr, int nErrCode )
 
 		// 記号
 		{
-		char	key[] = "+-*/()";
+		char *	key[] = { "==", "!=", "<=", ">=", NULL };
+		int		i = 0;
+		for( ; key[i] != NULL; ++i ){
+			if( memcmp( key[i], p, 2 ) == 0 ){
+				cur = new_token( TK_RESERVED2, cur, p );
+				p += 2;
+				if( cur == NULL ){
+					delete_list( head.next );
+					error( nErrCode, 300, "メモリ不足です。" );
+					nLastError = 300;
+					return head.next;
+				}// if
+				continue;
+			}// if
+		}// for
+		}// end
+
+		// 記号
+		{
+		char	key[] = "+-*/()<>";
 		if( strchr( key, *p ) != NULL ){
 			cur = new_token( TK_RESERVED, cur, p++ );
 			if( cur == NULL ){
@@ -242,6 +275,7 @@ Token * tokenize ( char * pStr, int nErrCode )
 				nLastError = 100;
 				return head.next;
 			}
+			cur->len = 1;
 			continue;
 		}
 		}// end

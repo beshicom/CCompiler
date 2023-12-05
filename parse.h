@@ -22,11 +22,21 @@
 typedef enum
 {
 
+	ND_NUM,		// РоРФ
+
 	ND_ADD,		// +
 	ND_SUB,		// -
+
 	ND_MUL,		// *
 	ND_DIV,		// /
-	ND_NUM,		// РоРФ
+
+	ND_SML,		// <
+	ND_SME,		// <=
+	ND_BIG,		// >
+	ND_BGE,		// >=
+
+	ND_EQU,		// ==
+	ND_NEQ,		// !=
 
 	ND_END		// (ПIТ[Оq)
 
