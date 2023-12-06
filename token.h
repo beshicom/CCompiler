@@ -2,7 +2,8 @@
 
 
 // 文字列をトークンに分ける
-
+//	変数は、英小文字１文字の２６種類があらかじめ使えるようになっている。
+//	変数のサイズは８バイトのみ。
 
 
 #include	<stdio.h>
@@ -27,10 +28,15 @@ extern char *	user_input;		// 処理するプログラムの文字列全体の先頭
 // トークンの種類 TokenKind										//TAG_JUMP_MARK
 typedef enum {
 
+	TK_START,
+
 	TK_RESERVED,	// 記号
 	TK_RESERVED2,	// ２文字の記号 (トークナイズの時のみ使用)
+	TK_IDENT,		// 識別子
 	TK_NUM,			// 整数
-	TK_EOF			// 入力の終わり
+	TK_EOF,			// 入力の終わり
+
+	TK_END
 
 } TokenKind;
 
@@ -56,6 +62,13 @@ extern Token *	token;
 //	次のトークンtokenが期待している記号の時は真を返す。でなければ偽を返す。
 //	トークンを読み進める。
 bool consume ( char * op );
+
+
+
+// consume_kind()												//TAG_JUMP_MARK
+//	次のトークンtokenが期待している種類の時は真を返す。でなければ偽を返す。
+//	トークンを読み進める。
+bool consume_kind ( int kind, Token ** ppToken );
 
 
 

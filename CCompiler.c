@@ -50,7 +50,9 @@ int main ( int argc, char **argv )
 	Parse();
 
 	if( fPrint ){
-		printf( "%s = %d\n", argv[1], Calc( NodeTop ) );
+
+		for( int i=0; NodeTop[i]!=NULL; ++i )
+			printf( "%s = %d\n", argv[1], Calc( NodeTop[i] ) );
 		Print();
 		printf( "push return -------------" );
 		getchar();
@@ -59,15 +61,15 @@ int main ( int argc, char **argv )
 
 	if( ! fAsm ){
 		delete_list( mToken );
-		delete_tree( NodeTop );
+		delete_tree_all();
 		return 0;
 	}
 
 	// x86 アセンブラコードの生成
-	GenAsm( NodeTop );
+	GenerateAsmCode();
 
 	delete_list( mToken );
-	delete_tree( NodeTop );
+	delete_tree_all();
 
 	return 0;
 

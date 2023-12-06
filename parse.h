@@ -22,7 +22,12 @@
 typedef enum
 {
 
+	ND_START,
+
 	ND_NUM,		// 整数
+	ND_LCVAR,	// ローカル変数
+
+	ND_ASSIGN,	// =
 
 	ND_ADD,		// +
 	ND_SUB,		// -
@@ -38,7 +43,7 @@ typedef enum
 	ND_EQU,		// ==
 	ND_NEQ,		// !=
 
-	ND_END		// (終端子)
+	ND_END
 
 } NodeKind ;
 
@@ -54,13 +59,16 @@ struct Node
 	Node *		lhs;		// 左辺 left hand side
 	Node *		rhs;		// 右辺 roight hand side
 	int			val;		// kind==ND_NUMの時のみ使う
+	int			offset;		// kind==ND_LCVARの時のみ使う
+							// BPからのオフセット値
 
 	int			nErr;		// エラーが発生したらnot0
 	int			nBlockID;	// メモリーブロックの通し番号
 
 };
 
-extern Node *	NodeTop;	// 構文木の先頭
+#define	nMaxNode	10000	// プログラムのstatementの数
+extern Node *	NodeTop[ nMaxNode ];	// 構文木の先頭
 
 extern int		nNumBlock;	// メモリーブロックの総数
 

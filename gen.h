@@ -25,9 +25,15 @@ int gen ( Node * node, int nDepth );
 
 
 
-// 構文木からアセンブラコードを生成する gen()					//TAG_JUMP_MARK
+// 構文木からアセンブラコードを生成する GenAsm()				//TAG_JUMP_MARK
 //	機械的にスタックマシンとしての x86コードを生成。
 int GenAsm ( Node * node );
+
+
+
+// 構文木からアセンブラコードを生成する GenerateAsmCode()		//TAG_JUMP_MARK
+//	機械的にスタックマシンとしての x86コードを生成。
+int GenerateAsmCode ( );
 
 
 

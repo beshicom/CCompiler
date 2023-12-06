@@ -105,6 +105,36 @@ bool consume ( char * op )
 
 
 
+// consume_kind()												//TAG_JUMP_MARK
+//	次のトークンtokenが期待している種類の時は真を返す。でなければ偽を返す。
+//	トークンを読み進める。
+//	評価したトークンのアドレスを ppToken に格納する。
+bool consume_kind ( int kind, Token ** ppToken )
+{
+
+	nLastError = 0;
+
+	if( ( kind <= TK_START )||( TK_END <= kind ) ){
+		nLastError = 3;
+		return false;
+	}
+
+	if( ppToken != NULL )	*ppToken = token;
+
+	if( token->kind != kind ){
+		nLastError = 1;
+		return false;
+	}
+
+	token = token->next;	// 次のトークンへ
+
+	return true;
+
+}
+//bool consume_kind ( int kind, Token ** ppToken )
+
+
+
 // expect()														//TAG_JUMP_MARK
 //	次のトークンtokenが期待している記号の時はトークンを１つ読み進める。
 //	でなければエラーを報告する。
@@ -245,7 +275,7 @@ Token * tokenize ( char * pStr, int nErrCode )
 		// 空白文字をスキップ
 		if( isspace( *p ) ) {  ++p;  continue;  }
 
-		// 記号
+		// ２文字の記号
 		{
 		char *	key[] = { "==", "!=", "<=", ">=", NULL };
 		int		i = 0;
@@ -264,9 +294,9 @@ Token * tokenize ( char * pStr, int nErrCode )
 		}// for
 		}// end
 
-		// 記号
+		// １文字の記号
 		{
-		char	key[] = "+-*/()<>";
+		char	key[] = "+-*/()<>=;";
 		if( strchr( key, *p ) != NULL ){
 			cur = new_token( TK_RESERVED, cur, p++ );
 			if( cur == NULL ){
@@ -280,20 +310,6 @@ Token * tokenize ( char * pStr, int nErrCode )
 		}
 		}// end
 
-		/*
-		// + or -
-		if(  ( *p == '+' )||( *p == '-' )  ){
-			cur = new_token( TK_RESERVED, cur, p++ );
-			if( cur == NULL ){
-				delete_list( head.next );
-				error( nErrCode, 100, "メモリ不足です。" );
-				nLastError = 100;
-				return head.next;
-			}
-			continue;
-		}
-		*/
-
 		// 数値
 		if( isdigit( *p ) ) {
 			cur = new_token( TK_NUM, cur, p );
@@ -304,6 +320,20 @@ Token * tokenize ( char * pStr, int nErrCode )
 				return head.next;
 			}
 			cur->val = strtol( p, &p, 10 );	// pには次のアドレスが入る
+			continue;
+		}
+
+		// 変数
+		//	英小文字１文字の変数とする。
+		if(  ( 'a' <= *p )&&( *p <= 'z' ) ){
+			cur = new_token( TK_IDENT, cur, p++ );
+			if( cur == NULL ){
+				delete_list( head.next );
+				error( nErrCode, 400, "メモリ不足です。" );
+				nLastError = 400;
+				return head.next;
+			}
+			cur->len = 1;
 			continue;
 		}
 
